@@ -1665,9 +1665,9 @@ func (wm wincntMap) getLevel(p int) int32 {
 
 type SelectChar struct {
 	def, name, sprite, intro_storyboard, ending_storyboard string
-	pal_defaults []int32
-	pal []int32
-	sportrait, lportrait, vsportrait, vportrait *Sprite
+	pal_defaults                                           []int32
+	pal                                                    []int32
+	sportrait, lportrait, vsportrait, vportrait            *Sprite
 }
 type SelectStage struct {
 	def, name, zoomout, zoomin, bgmusic, bgmvolume string
@@ -1756,7 +1756,7 @@ func (s *Select) addCahr(def string) {
 	} else {
 		def += ".def"
 	}
-	if strings.ToLower(def[0 : 6]) != "chars/" && (def[0] != '/' || idx > 0 && strings.Index(def[:idx], ":") < 0) {
+	if strings.ToLower(def[0:6]) != "chars/" && (def[0] != '/' || idx > 0 && strings.Index(def[:idx], ":") < 0) {
 		def = "chars/" + def
 	}
 	if def = FileExist(def); len(def) == 0 {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/yuin/gopher-lua"
+	"math/rand"
 	"runtime"
 	"strings"
-	"math/rand"
 )
 
 func luaRegister(l *lua.LState, name string, f func(*lua.LState) int) {
@@ -833,10 +833,10 @@ func systemScriptInit(l *lua.LState) {
 							tmp.RawSetString("drawgame", lua.LBool(p[0].drawgame()))
 							tmp.RawSetString("ko", lua.LBool(p[0].scf(SCF_ko)))
 							tmp.RawSetString("ko_round_middle", lua.LBool(p[0].scf(SCF_ko_round_middle)))
-							tbl_roundNo.RawSetInt(p[0].playerNo + 1, tmp)
+							tbl_roundNo.RawSetInt(p[0].playerNo+1, tmp)
 						}
 					}
-					tbl_chars.RawSetInt(int(sys.round - 1), tbl_roundNo)
+					tbl_chars.RawSetInt(int(sys.round-1), tbl_roundNo)
 				}
 				return winp, nil
 			}
@@ -866,7 +866,7 @@ func systemScriptInit(l *lua.LState) {
 				time := int32(0)
 				tbl_time := l.NewTable()
 				for k, v := range sys.timerCount {
-					tbl_time.RawSetInt(k + 1, lua.LNumber(v))
+					tbl_time.RawSetInt(k+1, lua.LNumber(v))
 					time = time + v
 				}
 				tbl.RawSetString("chars", tbl_chars)
@@ -874,7 +874,7 @@ func systemScriptInit(l *lua.LState) {
 				tbl.RawSetString("time", lua.LNumber(time))
 				tbl.RawSetString("roundTime", lua.LNumber(sys.roundTime))
 				tbl.RawSetString("winTeam", lua.LNumber(sys.winTeam))
-				tbl.RawSetString("lastRound", lua.LNumber(sys.round - 1))
+				tbl.RawSetString("lastRound", lua.LNumber(sys.round-1))
 				tbl.RawSetString("draws", lua.LNumber(sys.draws))
 				tbl.RawSetString("P1wins", lua.LNumber(sys.wins[0]))
 				tbl.RawSetString("P2wins", lua.LNumber(sys.wins[1]))
@@ -1033,7 +1033,7 @@ func systemScriptInit(l *lua.LState) {
 		}
 		if len(pal) > 0 {
 			for k, v := range pal {
-				tbl.RawSetInt(k + 1, lua.LNumber(v))
+				tbl.RawSetInt(k+1, lua.LNumber(v))
 			}
 		} else {
 			tbl.RawSetInt(1, lua.LNumber(1))

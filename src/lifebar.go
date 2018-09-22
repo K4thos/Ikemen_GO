@@ -773,7 +773,7 @@ func (r *LifeBarRound) act() bool {
 		}
 	} else if r.cur == 2 && (sys.finish != FT_NotYet || sys.time == 0) {
 		if r.timerActive {
-			if sys.gameTime - sys.timerCount[sys.round-1] > 0 {
+			if sys.gameTime-sys.timerCount[sys.round-1] > 0 {
 				sys.timerCount[sys.round-1] = sys.gameTime - sys.timerCount[sys.round-1]
 			} else {
 				sys.timerCount[sys.round-1] = 0
