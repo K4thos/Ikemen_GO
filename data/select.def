@@ -124,6 +124,7 @@ ShinGouki, order=3, boss=1
 randomselect
 Catwalk, order=2, exclude=1, bonus=1, zoom=0, winscreen=0
 DuckHunt, order=2, exclude=1, bonus=1, zoom=0, winscreen=0
+Training
 
 [ExtraStages]
  ;Put extra stages here. They will be available in VS and Watch modes.
