@@ -1871,6 +1871,8 @@ func (c *Compiler) expValue(out *BytecodeExp, in *string,
 				mt = MT_A
 			case 'h':
 				mt = MT_H
+			case 'g':
+				mt = MT_G
 			default:
 				return Error(c.token + "が無効な値です")
 			}
@@ -3492,6 +3494,8 @@ func (c *Compiler) stateDef(is IniSection, sbc *StateBytecode) error {
 				sbc.moveType = MT_A
 			case 'h':
 				sbc.moveType = MT_H
+			case 'g':
+				sbc.moveType = MT_G
 			case 'u':
 				sbc.moveType = MT_U
 			default:
@@ -3700,6 +3704,8 @@ func (c *Compiler) assertSpecial(is IniSection, sc *StateControllerBase,
 				sc.add(assertSpecial_flag, sc.iToExp(int32(CSF_nohardcodedkeys)))
 			case "nogetupfromliedown":
 				sc.add(assertSpecial_flag, sc.iToExp(int32(CSF_nogetupfromliedown)))
+			case "noguarddamage":
+				sc.add(assertSpecial_flag, sc.iToExp(int32(CSF_noguarddamage)))
 			case "nofastrecoverfromliedown":
 				sc.add(assertSpecial_flag, sc.iToExp(int32(CSF_nofastrecoverfromliedown)))
 			case "nofallcount":
@@ -6401,6 +6407,8 @@ func (c *Compiler) stateTypeSet(is IniSection, sc *StateControllerBase,
 				mt = MT_A
 			case 'h':
 				mt = MT_H
+			case 'g':
+				mt = MT_G
 			default:
 				return Error(data + "が無効な値です")
 			}

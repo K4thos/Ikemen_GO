@@ -51,6 +51,7 @@ const (
 	MT_I MoveType = 1 << (iota + 15)
 	MT_H
 	MT_A
+	MT_G
 	MT_U
 	MT_MNS = MT_I
 	MT_PLS = MT_H

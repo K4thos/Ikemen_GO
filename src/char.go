@@ -29,7 +29,7 @@ const (
 	SCF_disabled
 )
 
-type CharSpecialFlag uint32
+type CharSpecialFlag uint64
 
 const (
 	CSF_nostandguard CharSpecialFlag = 1 << iota
@@ -48,6 +48,7 @@ const (
 	CSF_noairjump
 	CSF_nohardcodedkeys
 	CSF_nogetupfromliedown
+	CSF_noguarddamage
 	CSF_nofastrecoverfromliedown
 	CSF_nofallcount
 	CSF_nofalldefenceup
@@ -68,7 +69,7 @@ const (
 		CSF_noairguard | CSF_noshadow | CSF_invisible | CSF_unguardable |
 		CSF_nojugglecheck | CSF_noautoturn | CSF_nowalk | CSF_nobrake |
 		CSF_nocrouch | CSF_nostand | CSF_nojump | CSF_noairjump |
-		CSF_nohardcodedkeys | CSF_nogetupfromliedown |
+		CSF_nohardcodedkeys | CSF_nogetupfromliedown | CSF_noguarddamage |
 		CSF_nofastrecoverfromliedown | CSF_nofallcount | CSF_nofalldefenceup
 )
 
@@ -4708,10 +4709,9 @@ func (c *Char) action() {
 	}
 	c.acttmp = -int8(Btoi(p)) * 2
 	c.unsetSCF(SCF_guard)
-	if !(c.scf(SCF_ko) || c.ctrlOver()) &&
-		((c.scf(SCF_ctrl) || c.ss.no == 52) &&
-			c.ss.moveType == MT_I || c.inGuardState()) && c.cmd != nil &&
-		(sys.autoguard[c.playerNo] || c.cmd[0].Buffer.B > 0) &&
+	if !(c.scf(SCF_ko) || c.ctrlOver()) && c.cmd != nil &&
+		((c.scf(SCF_ctrl) || c.ss.no == 52) && (c.ss.moveType == MT_I || c.inGuardState()) &&
+			(sys.autoguard[c.playerNo] || c.cmd[0].Buffer.B > 0) || c.ss.moveType == MT_G) &&
 		(c.ss.stateType == ST_S && !c.sf(CSF_nostandguard) ||
 			c.ss.stateType == ST_C && !c.sf(CSF_nocrouchguard) ||
 			c.ss.stateType == ST_A && !c.sf(CSF_noairguard)) {
@@ -4765,7 +4765,7 @@ func (c *Char) action() {
 							c.changeState(0, -1, -1, false)
 						}
 						if c.inguarddist && c.scf(SCF_guard) && c.cmd[0].Buffer.B > 0 &&
-							!c.inGuardState() {
+							!c.inGuardState() && c.ss.moveType != MT_G {
 							c.changeState(120, -1, -1, false)
 						}
 					}
@@ -4982,7 +4982,7 @@ func (c *Char) update(cvmin, cvmax,
 			c.hitdef.reversal_attr > 0) && !c.hitPause()))
 		c.hoIdx = -1
 		if c.acttmp > 0 {
-			if c.inGuardState() {
+			if c.inGuardState() || c.ss.moveType == MT_G {
 				c.setSCF(SCF_guard)
 			}
 			if c.ss.moveType == MT_H {
@@ -5538,7 +5538,9 @@ func (cl *CharList) clsn(getter *Char, proj bool) {
 						ghv.xvel = hd.guard_velocity * c.localscl / getter.localscl
 						//ghv.yvel = hd.ground_velocity[1] * c.localscl / getter.localscl
 					}
-					absdamage = hd.guarddamage
+					if !getter.sf(CSF_noguarddamage) {
+						absdamage = hd.guarddamage
+					}
 					ghv.hitcount = hc
 				} else {
 					ghv.hitshaketime = Max(0, hd.shaketime)
@@ -5653,7 +5655,7 @@ func (cl *CharList) clsn(getter *Char, proj bool) {
 				}
 			} else if hitType == 1 {
 				absdamage = hd.hitdamage
-			} else {
+			} else if !getter.sf(CSF_noguarddamage) {
 				absdamage = hd.guarddamage
 			}
 			if sys.super > 0 {
