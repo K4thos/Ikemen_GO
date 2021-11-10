@@ -3024,6 +3024,28 @@ func (c *Compiler) defenceMulSet(is IniSection, sc *StateControllerBase, _ int8)
 			defenceMulSet_redirectid, VT_Int, 1, false); err != nil {
 			return err
 		}
+		if err := c.stateParam(is, "multype", func(data string) error {
+			if len(data) == 0 {
+				return Error("Value not specified")
+			}
+			var mt int32
+			switch strings.ToLower(data) {
+			case "defence":
+				mt = 0
+			case "attack":
+				mt = 1
+			default:
+				return Error("Invalid value: " + data)
+			}
+			sc.add(defenceMulSet_mulType, sc.iToExp(mt))
+			return nil
+		}); err != nil {
+			return err
+		}
+		if err := c.paramValue(is, sc, "delay",
+			defenceMulSet_delay, VT_Bool, 1, false); err != nil {
+			return err
+		}
 		if err := c.paramValue(is, sc, "value",
 			defenceMulSet_value, VT_Float, 1, true); err != nil {
 			return err

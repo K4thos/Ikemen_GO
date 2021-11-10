@@ -5699,21 +5699,33 @@ type defenceMulSet StateControllerBase
 
 const (
 	defenceMulSet_value byte = iota
+	defenceMulSet_mulType
+	defenceMulSet_delay
 	defenceMulSet_redirectid
 )
 
 func (sc defenceMulSet) Run(c *Char, _ []int32) bool {
 	crun := c
+	// Multiply defence, no delay
+	var mt int32
+	var md bool
+	if c.stCgi().ikemenver[0] == 0 && c.stCgi().ikemenver[1] == 0 {
+		// Divide defence, delay applying
+		mt, md = 1, true
+	}
 	StateControllerBase(sc).run(c, func(id byte, exp []BytecodeExp) bool {
 		switch id {
 		case defenceMulSet_value:
-			if c.stCgi().ikemenver[0] > 0 || c.stCgi().ikemenver[1] > 0 {
+			if mt == 0 {
 				crun.customDefense = exp[0].evalF(c)
-				crun.defenseMulDelay = false
 			} else {
 				crun.customDefense = 1 / exp[0].evalF(c)
-				crun.defenseMulDelay = true
 			}
+			crun.defenseMulDelay = md
+		case defenceMulSet_mulType:
+			mt = exp[0].evalI(c)
+		case defenceMulSet_delay:
+			md = exp[0].evalB(c)
 		case defenceMulSet_redirectid:
 			if rid := sys.playerID(exp[0].evalI(c)); rid != nil {
 				crun = rid
